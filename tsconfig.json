@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2022", /* 変換後のJavaScriptのバージョン */
+    "module": "commonjs", /* JavaScriptのモジュール方式 */
+    "outDir": "./dist", /* コンパイルしたJavaScriptをdistフォルダへ出力 */
+    "esModuleInterop": true, /* CommonJS形式のライブラリをimportしやすくする */
+    "strict": true, /* TypeScriptの厳格な型チェックを有効にする */
+    "skipLibCheck": true /* 外部ライブラリの型定義ファイルのチェックを省略する */
+  },
+  "include": ["index.ts"] /* 今回コンパイルするindex.tsを指定する */
+}
