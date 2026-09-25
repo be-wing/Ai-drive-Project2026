@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import path from 'path';
+import { pool } from './db'; // db.tsで作成したNeonへの接続を利用する
 
 const app = express(); // Expressアプリケーションを作成
 const port: number = 3000; // ローカルで使用するポート番号
@@ -7,25 +8,40 @@ const port: number = 3000; // ローカルで使用するポート番号
 // ------------------------------
 // Expressの基本設定
 // ------------------------------
-app.use(express.urlencoded({ extended: true })); // フォームから送信されたデータを受け取れるようにする
-app.use(express.static(path.join(__dirname, 'public'))); // CSSや画像などの静的ファイルを公開する
-app.set('view engine', 'ejs'); // テンプレートエンジンにEJSを設定
-app.set('views', path.join(__dirname, 'views')); // EJSファイルを保存するフォルダーを指定
-
+app.use(express.urlencoded({ extended: true })); // フォームの入力を受け取る
+app.use(express.static(path.join(__dirname, 'public'))); // CSSや画像を公開する
+app.set('view engine', 'ejs'); // テンプレートエンジンをEJSに設定する
+app.set('views', path.join(__dirname, 'views')); // EJSファイルの保存先
 
 // ------------------------------
 // ルーティング
 // ------------------------------
 
-// 「/」にアクセスされたときの処理
-app.get('/', (req: Request, res: Response): void => {
+// トップページを表示する
+app.get('/', (_req: Request, res: Response): void => {
   res.render('index');
+});
+
+// Neonへの接続をSELECT文で確認する
+app.get('/api/db-check', async (_req: Request, res: Response) => {
+  try {
+    const result = await pool.query('SELECT 1 AS connection_test');
+
+    if (result.rows[0]?.connection_test !== 1) {
+      res.status(503).json({ status: 'error', database: 'unavailable' });
+      return;
+    }
+
+    res.json({ status: 'ok', database: 'connected' });
+  } catch (error) {
+    console.error('DB接続確認に失敗しました', error);
+    res.status(503).json({ status: 'error', database: 'unavailable' });
+  }
 });
 
 // ------------------------------
 // サーバー起動
 // ------------------------------
-
 app.listen(port, (): void => {
   console.log(`Server started: http://localhost:${port}`);
 });
