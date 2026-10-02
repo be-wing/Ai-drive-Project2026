@@ -5,6 +5,7 @@ import { pool } from './db'; // db.tsで作成したNeonへの接続を利用す
 const app = express(); // Expressアプリケーションを作成
 const port: number = 3000; // ローカルで使用するポート番号
 
+
 // ------------------------------
 // Expressの基本設定
 // ------------------------------
